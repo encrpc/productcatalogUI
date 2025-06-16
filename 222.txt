@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Gallery</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <style>
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    #imageModal .fade-in {
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    .thumbnails::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .thumbnail-btn img {
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
+      border-radius: 0.5rem;
+      border: 2px solid transparent;
+    }
+    
+    .thumbnail-btn:focus img,
+    .thumbnail-btn:hover img {
+      transform: scale(1.08);
+      border-color: #ffffff;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.7);
+    }
+    
+    .thumbnail-btn.active img {
+      border-color: #ffffff;
+      box-shadow: 0 0 10px #ffffff;
+    }
+    
+    .glass-btn {
+      background-color: #333F48;
+      color: white;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+      width: 40px;
+      height: 40px;
+    }
+    
+    .glass-btn:hover {
+      background-color: #162a47;
+      transform: scale(1.05);
+    }
+    
+    .modal {
+      backdrop-filter: blur(8px);
+    }
+    
+    .card {
+      perspective: 1000px;
+    }
+    
+    .card-inner {
+      transition: transform 0.8s;
+      transform-style: preserve-3d;
+    }
+    
+    .card:hover .card-inner {
+      transform: rotateY(180deg);
+    }
+    
+    .card-front, .card-back {
+      backface-visibility: hidden;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .card-back {
+      transform: rotateY(180deg);
+    }
+    
+    .scroll-indicator {
+      animation: float 2s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+  <!-- Header -->
+  <header class="bg-white shadow-sm py-4 px-4 md:px-8 flex justify-between items-center text-[#333F48]">
+    <div class="text-2xl font-serif text-indigo-950 tracking-wider flex items-center">
+      <i class="fas fa-crown text-amber-500 mr-2"></i>
+      LEGACY
+    </div>
+    <button id="menuToggle" class="md:hidden text-xl text-indigo-950">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="hidden md:flex items-center space-x-6">
+      <div class="relative">
+        <input type="text" placeholder="Search Product" class="border border-gray-300 rounded-md px-4 py-1 text-sm focus:outline-none focus:border-[#333F48] text-[#333F48]" /> 
+        <button class="absolute right-2 top-1/2 transform -translate-y-1/2 text-[#333F48]">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+      <a href="#" class="text-sm hover:text-[#333F48] transition-colors duration-300">Home</a>
+      <a href="#" class="text-sm hover:text-[#333F48] transition-colors duration-300">Men</a>
+      <a href="#" class="text-sm hover:text-[#333F48] transition-colors duration-300">Women</a>
+      <a href="#" class="text-sm hover:text-[#333F48] transition-colors duration-300">Collections</a>
+      <a href="#" class="text-sm hover:text-[#333F48] transition-colors duration-300">About</a>
+      <a href="#" class="text-sm hover:text-[#333F48] transition-colors duration-300"><i class="fas fa-shopping-cart"></i></a>
+    </div>
+  </header>
+
+  <!-- Mobile Menu -->
+  <nav id="mobileMenu" class="md:hidden hidden flex-col px-4 pb-4 space-y-3 bg-white shadow-lg">
+    <div class="flex items-center border rounded-md overflow-hidden shadow-inner">
+      <input type="text" placeholder="Search products..." class="w-full px-3 py-2 outline-none text-sm"/>
+      <button class="px-3 py-2 bg-indigo-100 text-indigo-800 rounded-r-md">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+    <a href="#" class="text-sm p-2 rounded-md hover:bg-indigo-50">Men</a>
+    <a href="#" class="text-sm p-2 rounded-md hover:bg-indigo-50">Women</a>
+    <a href="#" class="text-sm p-2 rounded-md hover:bg-indigo-50">Collections</a>
+    <a href="#" class="text-sm p-2 rounded-md hover:bg-indigo-50">About</a>
+  </nav>
+
+  <!-- Main -->
+  <main class="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- Mobile Header for Product Info (only visible on mobile) -->
+      <div class="lg:hidden mb-6 text-center">
+        <h1 class="text-3xl font-serif text-indigo-950 mb-2">Premium Leather Briefcase</h1>
+        <p class="text-gray-600">Crafted with hand-selected Italian leather</p>
+      </div>
+      
+      <!-- Left Column -->
+      <div class="w-full lg:w-[55%] flex flex-col gap-6 lg:sticky lg:top-24 lg:h-[calc(100vh-6rem)]">
+        <!-- Mobile view thumbnails -->
+        <div class="lg:hidden relative w-full mb-4">
+          <div id="mobileThumbnails" class="flex gap-3 overflow-x-auto pb-3 thumbnails">
+            <!-- JS injects thumbnails for mobile -->
+          </div>
+          <div class="scroll-indicator absolute bottom-2 right-2 text-indigo-900">
+            <i class="fas fa-arrow-right animate-pulse"></i>
+          </div>
+        </div>
+        
+        <div class="flex flex-col md:flex-row gap-6">
+          <!-- Thumbnails -->
+          <div class="hidden lg:flex flex-col items-center gap-4">
+            <button onclick="scrollThumbnails(-1)" class="flex items-center justify-center text-indigo-800 hover:text-indigo-600 transition-colors">
+              <i class="fas fa-chevron-up text-xl"></i>
+            </button>
+            <div id="thumbnailContainer" class="thumbnails flex flex-col gap-4 overflow-y-auto h-[500px] p-1">
+              <!-- JS injects thumbnails -->
+            </div>
+            <button onclick="scrollThumbnails(1)" class="flex items-center justify-center text-indigo-800 hover:text-indigo-600 transition-colors">
+              <i class="fas fa-chevron-down text-xl"></i>
+            </button>
+          </div>
+          
+          <!-- Main Image -->
+          <div class="relative w-full rounded-xl overflow-hidden shadow-xl">
+            <div class="absolute top-4 left-4 bg-amber-500 text-indigo-900 font-bold py-1 px-3 text-xs rounded-full z-10 shadow-md">
+              NEW
+            </div>
+            <img id="mainImage" src="" class="w-full h-full object-cover aspect-square fade-in bg-white" />
+            <button id="pauseBtn" onclick="toggleSlideshow()" class="glass-btn absolute top-3 right-3 p-2 rounded-full shadow-lg flex items-center justify-center">
+              <i id="pauseIcon" class="fas fa-pause"></i>
+            </button>
+            
+          </div>
+        </div>
+        
+        <!-- Image Grid -->
+        <div class="hidden lg:block mt-auto">
+          <h3 class="text-lg font-medium text-indigo-950 mb-3">Product Collection</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <template id="grid-image-template">
+              <div class="relative group rounded-lg overflow-hidden shadow-md">
+                <img src="" class="w-full aspect-[4/5] object-cover transition duration-300 transform group-hover:scale-105" onclick="openModal(this.src)" />
+                <button onclick="openModal(this.previousElementSibling.src)" class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-black/40 text-white text-xl">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="w-full lg:w-[45%] mt-6 lg:mt-0 bg-white p-6 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl">
+        <!-- Desktop Header -->
+        <div class="hidden lg:block">
+          <h1 class="text-3xl font-serif text-indigo-950 mb-2">Premium Leather Briefcase</h1>
+          <p class="text-gray-600">Crafted with hand-selected Italian leather</p>
+        </div>
+        
+        <div class="flex items-center mb-4 mt-4">
+          <div class="flex text-amber-400">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star-half-alt"></i>
+          </div>
+          <span class="text-sm text-gray-600 ml-2">(128 reviews)</span>
+        </div>
+        
+        <div class="bg-indigo-50 rounded-xl p-4 mb-6">
+          <div class="flex justify-between items-center">
+            <span class="text-2xl font-bold text-indigo-950">$299.99</span>
+            <span class="text-gray-500 line-through">$399.99</span>
+            <span class="bg-amber-500 text-indigo-950 text-xs font-bold px-2 py-1 rounded">25% OFF</span>
+          </div>
+          <p class="text-xs text-indigo-700 mt-1">Limited time offer</p>
+        </div>
+        
+        <p class="text-gray-700 mb-6">
+          Introducing our premium leather briefcase, designed for the modern professional who values both style and functionality. Handcrafted in Italy with the finest full-grain leather and equipped with advanced organizational features, this briefcase elevates your work essentials while making a sophisticated statement.
+        </p>
+        
+        <div class="mb-6">
+          <h3 class="text-lg font-medium text-indigo-950 mb-2">Features:</h3>
+          <ul class="space-y-2">
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-emerald-500 mt-1 mr-2"></i>
+              <span>Handcrafted with full-grain Italian leather</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-emerald-500 mt-1 mr-2"></i>
+              <span>Water-resistant lining and reinforced corners</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-emerald-500 mt-1 mr-2"></i>
+              <span>Dual compartments with padded laptop sleeve (fits up to 16")</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-emerald-500 mt-1 mr-2"></i>
+              <span>Integrated USB charging port</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-emerald-500 mt-1 mr-2"></i>
+              <span>Adjustable and removable shoulder strap</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="mb-6">
+          <h3 class="text-lg font-medium text-indigo-950 mb-3">Color Options</h3>
+          <div class="flex gap-3">
+            <button class="w-10 h-10 rounded-full border-2 border-indigo-300 focus:border-indigo-700" style="background-color: #3a243b;"></button>
+            <button class="w-10 h-10 rounded-full border-2 border-indigo-300 focus:border-indigo-700" style="background-color: #1e2a3a;"></button>
+            <button class="w-10 h-10 rounded-full border-2 border-indigo-300 focus:border-indigo-700" style="background-color: #7b5a42;"></button>
+            <button class="w-10 h-10 rounded-full border-2 border-indigo-300 focus:border-indigo-700" style="background-color: #272727;"></button>
+          </div>
+        </div>
+        
+        <div class="flex flex-wrap gap-4 mb-6">
+          <button class="px-6 py-3 bg-gradient-to-r from-indigo-700 to-indigo-900 text-white rounded-md w-full md:w-auto flex-1 hover:from-indigo-800 hover:to-indigo-950 transition-all shadow-md hover:shadow-lg">
+            <i class="fas fa-shopping-cart mr-2"></i> Add to Cart
+          </button>
+          <button class="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-md w-full md:w-auto flex-1 hover:from-amber-600 hover:to-amber-700 transition-all shadow-md hover:shadow-lg">
+            <i class="fas fa-bolt mr-2"></i> Buy Now
+          </button>
+        </div>
+        
+        <div class="border-t border-gray-200 pt-4">
+          <div class="accordion">
+            <button class="w-full flex justify-between items-center text-left py-2" onclick="toggleAccordion(this)">
+              <span class="font-medium text-indigo-950">Shipping & Returns</span>
+              <i class="fas fa-chevron-down text-indigo-700"></i>
+            </button>
+            <div class="accordion-content overflow-hidden max-h-0">
+              <p class="pt-2 pb-3 text-gray-600">
+                Free worldwide shipping on all orders. Delivery in 3-5 business days. 30-day return policy. Items must be in original condition.
+              </p>
+            </div>
+          </div>
+          
+          <div class="accordion">
+            <button class="w-full flex justify-between items-center text-left py-2" onclick="toggleAccordion(this)">
+              <span class="font-medium text-indigo-950">Warranty</span>
+              <i class="fas fa-chevron-down text-indigo-700"></i>
+            </button>
+            <div class="accordion-content overflow-hidden max-h-0">
+              <p class="pt-2 pb-3 text-gray-600">
+                All our products come with a 3-year craftsmanship warranty against defects in materials or workmanship. Normal wear and tear are not covered.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile Image Grid -->
+    <div class="lg:hidden mt-8">
+      
+      <div class="grid grid-cols-2 gap-4">
+        <template id="mobile-grid-image-template">
+          <div class="relative group rounded-lg overflow-hidden shadow-md">
+            <img src="" class="w-full aspect-[4/5] object-cover transition duration-300 transform group-hover:scale-105" onclick="openModal(this.src)" />
+            <button onclick="openModal(this.previousElementSibling.src)" class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-black/40 text-white text-xl">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </template>
+
+      </div>
+    </div>
+   
+    <!-- Product Info Cards -->
+   
+  </main>
+  
+  
+  
+  <!-- Footer -->
+  <footer class="bg-indigo-950 text-indigo-100 py-10 px-4">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="text-xl font-serif mb-4 text-amber-400">LEGACY</h3>
+          <p class="mb-4">Crafting timeless accessories for the modern professional.</p>
+          <div class="flex space-x-4">
+            <a href="#" class="text-amber-300 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="text-amber-300 hover:text-white"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="text-amber-300 hover:text-white"><i class="fab fa-pinterest-p"></i></a>
+            <a href="#" class="text-amber-300 hover:text-white"><i class="fab fa-twitter"></i></a>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="text-lg mb-4 text-white">Products</h4>
+          <ul class="space-y-2">
+            <li><a href="#" class="hover:text-amber-400 transition-colors">Briefcases</a></li>
+            <li><a href="#" class="hover:text-amber-400 transition-colors">Messenger Bags</a></li>
+            <li><a href="#" class="hover:text-amber-400 transition-colors">Backpacks</a></li>
+            <li><a href="#" class="hover:text-amber-400 transition-colors">Wallets</a></li>
+            <li><a href="#" class="hover:text-amber-400 transition-colors">Accessories</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg mb-4 text-white">Support</h4>
+          <ul class="space-y-2">
+            <li><a href="#" class="hover:text-amber-400 transition-colors">FAQs</a></li>
+            <li><a href="#" class="hover:text-amber-400 transition-colors">Shipping Info</a></li>
+            <li><a href="#" class="hover:text-amber-400 transition-colors">Returns & Exchanges</a></li>
+            <li><a href="#" class="hover:text-amber-400 transition-colors">Care Instructions</a></li>
+            <li><a href="#" class="hover:text-amber-400 transition-colors">Contact Us</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg mb-4 text-white">Newsletter</h4>
+          <p class="mb-3">Subscribe for updates and special offers</p>
+          <div class="flex">
+            <input type="email" placeholder="Email" class="px-3 py-2 w-full rounded-l-lg text-gray-800"/>
+            <button class="bg-amber-500 text-indigo-950 rounded-r-lg px-3">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="border-t border-indigo-800 mt-8 pt-6 text-center">
+        <p>&copy; 2023 LEGACY. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script -->
+  <script>
+    // Using different image placeholders for demo
+    const imageList = [
+      'DSCF1574.jpg',
+      'briefcase_brown.webp',
+      'briefcase_desktop.webp',
+      'briefcase_open.webp',
+      'briefcase_side.webp',
+      'briefcase_with_items.webp'
+    ];
+    
+    let slideshowInterval;
+    let currentIndex = 0;
+    let isPaused = false;
+    
+    const mainImage = document.getElementById('mainImage');
+    const thumbnailContainer = document.getElementById('thumbnailContainer');
+    const mobileThumbnails = document.getElementById('mobileThumbnails');
+    const pauseIcon = document.getElementById('pauseIcon');
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImg');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuToggle = document.getElementById('menuToggle');
+    
+    function renderThumbnails() {
+      thumbnailContainer.innerHTML = '';
+      mobileThumbnails.innerHTML = '';
+      
+      imageList.forEach((src, index) => {
+        // Desktop thumbnails
+        const btn = document.createElement('button');
+        btn.className = 'thumbnail-btn w-20 h-20 flex-shrink-0';
+        btn.innerHTML = `<img src="${src}" class="w-full h-full object-cover" alt="thumb ${index + 1}" />`;
+        btn.addEventListener('click', () => {
+          currentIndex = index;
+          changeMainImage(src);
+        });
+        thumbnailContainer.appendChild(btn);
+        
+        // Mobile thumbnails
+        const mobileBtn = document.createElement('button');
+        mobileBtn.className = 'thumbnail-btn h-24 flex-shrink-0 mr-3';
+        mobileBtn.innerHTML = `<img src="${src}" class="w-24 h-full object-cover rounded-lg" alt="thumb ${index + 1}" />`;
+        mobileBtn.addEventListener('click', () => {
+          currentIndex = index;
+          changeMainImage(src);
+        });
+        mobileThumbnails.appendChild(mobileBtn);
+      });
+    }
+    
+    function renderGridImages() {
+      const gridContainer = document.querySelector('.grid');
+      const mobileGridContainer = document.querySelector('#mobile-view-grid');
+      const template = document.getElementById('grid-image-template');
+      const mobileTemplate = document.getElementById('mobile-grid-image-template');
+      
+      if (gridContainer) {
+        gridContainer.innerHTML = '';
+        imageList.slice(0, 4).forEach((src) => {
+          const clone = template.content.cloneNode(true);
+          const img = clone.querySelector('img');
+          img.src = src;
+          gridContainer.appendChild(clone);
+        });
+      }
+      
+      const mobileGrid = document.querySelector('.grid-cols-2');
+      if (mobileGrid) {
+        mobileGrid.innerHTML = '';
+        imageList.forEach((src) => {
+          const clone = mobileTemplate.content.cloneNode(true);
+          const img = clone.querySelector('img');
+          img.src = src;
+          mobileGrid.appendChild(clone);
+        });
+      }
+    }
+    
+    function highlightActiveThumbnail() {
+      const thumbnails = thumbnailContainer.querySelectorAll('.thumbnail-btn');
+      thumbnails.forEach((btn, i) => {
+        btn.classList.toggle('active', i === currentIndex);
+      });
+      
+      const mobileThumbs = mobileThumbnails.querySelectorAll('.thumbnail-btn');
+      mobileThumbs.forEach((btn, i) => {
+        btn.classList.toggle('active', i === currentIndex);
+      });
+      
+      scrollToActiveThumbnail();
+    }
+    
+    function changeMainImage(src) {
+      mainImage.classList.remove('fade-in');
+      setTimeout(() => {
+        mainImage.src = src;
+        mainImage.classList.add('fade-in');
+      }, 10);
+      highlightActiveThumbnail();
+    }
+    
+    function startSlideshow() {
+      slideshowInterval = setInterval(() => {
+        if (!isPaused) {
+          currentIndex = (currentIndex + 1) % imageList.length;
+          changeMainImage(imageList[currentIndex]);
+        }
+      }, 3000);
+    }
+    
+    function toggleSlideshow() {
+      isPaused = !isPaused;
+      pauseIcon.className = isPaused ? 'fas fa-play' : 'fas fa-pause';
+    }
+    
+    function scrollThumbnails(direction) {
+      const isVertical = window.innerWidth >= 1024;
+      const thumb = thumbnailContainer.querySelector('.thumbnail-btn');
+      const scrollAmount = (thumb?.offsetHeight || 80) + 12;
+      if (isVertical) {
+        thumbnailContainer.scrollBy({ top: direction * scrollAmount, behavior: 'smooth' });
+      } else {
+        mobileThumbnails.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+      }
+    }
+    
+    function scrollToActiveThumbnail() {
+      const activeThumb = thumbnailContainer.querySelectorAll('.thumbnail-btn')[currentIndex];
+      if (activeThumb) {
+        activeThumb.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+      
+      const activeMobileThumb = mobileThumbnails.querySelectorAll('.thumbnail-btn')[currentIndex];
+      if (activeMobileThumb) {
+        activeMobileThumb.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+      }
+    }
+    
+    let modalCurrentIndex = 0;
+    let modalSlideshowInterval;
+    let isModalPaused = false;
+    const modalPauseBtn = document.getElementById('modalPauseBtn');
+    const modalPauseIcon = document.getElementById('modalPauseIcon');
+    
+    function openModal(src) {
+      modalCurrentIndex = imageList.indexOf(src);
+      modal.classList.remove('hidden');
+      modalImg.src = src;
+      document.body.style.overflow = 'hidden';
+      startModalSlideshow();
+    }
+    
+    function navigateModal(direction) {
+      modalCurrentIndex = (modalCurrentIndex + direction + imageList.length) % imageList.length;
+      updateModalImage();
+    }
+    
+    function updateModalImage() {
+      modalImg.classList.remove('fade-in');
+      setTimeout(() => {
+        modalImg.src = imageList[modalCurrentIndex];
+        modalImg.classList.add('fade-in');
+      }, 10);
+    }
+    
+    function startModalSlideshow() {
+      clearInterval(modalSlideshowInterval);
+      modalSlideshowInterval = setInterval(() => {
+        if (!isModalPaused) {
+          modalCurrentIndex = (modalCurrentIndex + 1) % imageList.length;
+          updateModalImage();
+        }
+      }, 3000);
+    }
+    
+    function toggleModalSlideshow() {
+      isModalPaused = !isModalPaused;
+      modalPauseIcon.className = isModalPaused ? 'fas fa-play' : 'fas fa-pause';
+    }
+    
+    function closeModal() {
+      clearInterval(modalSlideshowInterval);
+      modal.classList.add('hidden');
+      document.body.style.overflow = 'auto';
+      isModalPaused = false;
+    }
+    
+    function toggleAccordion(button) {
+      const content = button.nextElementSibling;
+      const icon = button.querySelector('i');
+      
+      if (content.style.maxHeight) {
+        content.style.maxHeight = null;
+        icon.className = 'fas fa-chevron-down text-indigo-700';
+      } else {
+        content.style.maxHeight = content.scrollHeight + 'px';
+        icon.className = 'fas fa-chevron-up text-indigo-700';
+      }
+    }
+    
+    window.onclick = (e) => {
+      if (e.target === modal) closeModal();
+    };
+    
+    menuToggle.onclick = () => {
+      mobileMenu.classList.toggle('hidden');
+    };
+    
+    window.onload = () => {
+      renderThumbnails();
+      renderGridImages();
+      changeMainImage(imageList[currentIndex]);
+      startSlideshow();
+      
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!mobileMenu.contains(e.target) && !menuToggle.contains(e.target) && !mobileMenu.classList.contains('hidden')) {
+          mobileMenu.classList.add('hidden');
+        }
+      });
+    };
+  </script>
+</body>
+</html>
