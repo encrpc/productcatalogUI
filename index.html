@@ -461,29 +461,55 @@
         display: none;
       }
 
-      .en-section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        cursor: pointer;
-        user-select: none;
-        padding: 0.5rem 0;
-        border-bottom: 1px solid rgba(0,0,0,0.08);
-        margin-bottom: 1rem;
- 
+   .en-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  padding-left: 8px;
+  border: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  color: #334155;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.3s ease;
+}
 
+.en-section-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(173, 216, 230, 0.1) 0%,
+    rgba(173, 216, 230, 0.4) 50%,
+    rgba(173, 216, 230, 0.1) 100%
+  );
+  transform: skewX(-20deg);
+  pointer-events: none;
+}
 
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-padding-left: 8px;
-        border: 1px solid #e2e8f0;
-        background-color: #f8fafc;
-        color: #334155;
-        font-weight: 500;
-    
+.en-section-header:hover::before {
+  animation: sweep 0.7s ease-out forwards;
+}
 
-      }
+@keyframes sweep {
+  0% {
+    left: -75%;
+  }
+  100% {
+    left: 130%;
+  }
+}
 
       .en-toggle-icon {
         transition: all 0.3s ease;
@@ -567,29 +593,40 @@ padding-left: 8px;
         border: none;
         display: block;
         max-width: 100%;
-        border-radius: 0.5rem;
-        border: 1px solid #d1d5db;
-        padding: 0.5rem;
+        border-radius: 0rem;
+        border: 0px solid #d1d5db;
+        padding: 0rem;
         background: #f9fafb;
       }
 
-      .en-close-popup {
-        position: absolute;
-        top: 10px;
-        right: 15px;
-        font-size: 24px;
-        background: white;
-        border: none;
-        border-radius: 50%;
-        width: 36px;
-        height: 36px;
-        cursor: pointer;
-        z-index: 10001;
-        box-shadow: 0 0 5px rgba(0,0,0,0.2);
-        line-height: 1;
-        text-align: center;
-        padding: 0;
-      }
+     .en-close-popup {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 34px;
+  font-weight: bold;
+  background: white;
+  color: #333;
+  border: none;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  cursor: pointer;
+  z-index: 10001;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  padding: 0;
+  transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.en-close-popup:hover {
+  background: #1a345a;
+  color: white;
+ 
+}
+
 
       @media (min-width: 1024px) {
         .en-popup-box {
@@ -603,8 +640,8 @@ padding-left: 8px;
 
       @media (max-width: 1023px) {
         .en-popup-box {
-          width: 98% !important;
-          max-width: 98% !important;
+          width:100% !important;
+          max-width: 100% !important;
         }
         .en-popup-box iframe {
           width: 100% !important;
@@ -869,8 +906,10 @@ transform: scale(1.01);
 
 
  footer {
-            background: linear-gradient(135deg, #1b365d 0%, #122a4d 100%);
-            box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.1);
+             width: 100%;
+    padding: 10px; /* adjust padding as needed */
+    background: linear-gradient(135deg, #1b365d 0%, #122a4d 100%);
+    box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.1);
         }
         .footer-input:focus {
             outline: none;
@@ -881,12 +920,12 @@ transform: scale(1.01);
         .btn-action {
             transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
- padding: 5px 11px;
+ padding: 5px 8px;
         }
         .btn-action:hover {
            
             box-shadow: 0 10px 15px rgba(0,0,0,0.2);
-        transform: translateY(0px) scale(1.15);
+        transform: translateY(0px) scale(1.08);
         }
         .social-icon {
             transition: all 0.4s ease;
@@ -1123,13 +1162,22 @@ transform: scale(1.01);
                 <div class="zoom-overlay">
                   <i class="fas fa-search-plus zoom-icon"></i>
                 </div>
+
               </div>
-              <div class="sample-img-container rounded-lg shadow-md overflow-hidden" onclick="openPopup('DSCF1574.jpg')">
-                <img src="DSCF1574.jpg" alt="Sample 4" class="sample-img" />
+
+
+ <div class="sample-img-container rounded-lg shadow-md overflow-hidden" onclick="openPopup('DSCF1574.jpg')">
+                <img src="DSCF1574.jpg" alt="Sample 2" class="sample-img" />
                 <div class="zoom-overlay">
                   <i class="fas fa-search-plus zoom-icon"></i>
                 </div>
-              </div>
+              </div> <div class="sample-img-container rounded-lg shadow-md overflow-hidden" onclick="openPopup('DSCF1575.jpg')">
+                <img src="DSCF1575.jpg" alt="Sample 2" class="sample-img" />
+                <div class="zoom-overlay">
+                  <i class="fas fa-search-plus zoom-icon"></i>
+                </div>
+              </div> 
+             
             </div>
           </div>
         </div>
@@ -1212,7 +1260,7 @@ transform: scale(1.01);
                         
 
 
-<p class="en-fabric-details cursor-pointer" data-url="a.html"
+<p class="en-fabric-details cursor-pointer" data-url="taf.html"
    onclick="showEnPopup(this.getAttribute('data-url'))">
   Fabric Details
 </p>
@@ -1230,7 +1278,7 @@ transform: scale(1.01);
                           <span class="font-medium">Temptek</span>
                           <i class="fas fa-swatchbook en-fabric-icon"></i>
                         </div>
-                       <p class="en-fabric-details cursor-pointer" data-url="a.html"
+                       <p class="en-fabric-details cursor-pointer" data-url="FabTeml.html"
    onclick="showEnPopup(this.getAttribute('data-url'))">
   Fabric Details
 </p>
@@ -1256,7 +1304,7 @@ transform: scale(1.01);
                       </div>
                     </label>
                     <label class="en-fabric-option">
-                      <div class="en-embellish-btn" data-url="emb.html">
+                      <div class="en-embellish-btn" data-url="embroi.html">
                         <div class="en-fabric-name-container">
                           <span class="font-medium">Embroidery</span>
                           <i class="fas fa-fill-drip en-embellish-icon"></i>
@@ -1265,7 +1313,7 @@ transform: scale(1.01);
                       </div>
                     </label>
                     <label class="en-fabric-option">
-                      <div class="en-embellish-btn" data-url="emb.html">
+                      <div class="en-embellish-btn" data-url="woven.html">
                         <div class="en-fabric-name-container">
                           <span class="font-medium">Woven Label</span>
                           <i class="fas fa-fill-drip en-embellish-icon"></i>
@@ -1327,8 +1375,7 @@ transform: scale(1.01);
                     </button>
                     <button class="en-size-btn py-2 px-3 rounded-md border border-gray-200 bg-[#edf1f6] text-gray-700 font-medium text-sm">
                       XXL
-                    </button> <button class="en-size-btn py-2 px-3 rounded-md border border-gray-200 bg-[#edf1f6] text-gray-700 font-medium text-sm">
-                      XXL
+                
                     </button>
                   </div>
 <button class="animated-button">
@@ -1451,8 +1498,15 @@ UPF Sun Protection: Protects your skin from harmful UV rays
 </p>
                   </div>
                 </div>
+
+
               </div>
+
             </div>
+<div class="w-full flex justify-end items-center gap-2 px-4 py-3 bg-white text-[#283039]">
+  <i class="fas fa-tshirt" style="font-size: 13px;"></i>
+  <span style="font-size: 13px; font-weight: 600;">Encore Product Development</span>
+</div>
           </div>
 
          
@@ -1481,8 +1535,14 @@ UPF Sun Protection: Protects your skin from harmful UV rays
               <i class="fas fa-search-plus zoom-icon"></i>
             </div>
           </div>
-          <div class="sample-img-container rounded-lg shadow-md overflow-hidden" onclick="openPopup('DSCF1574.jpg')">
-            <img src="DSCF1574.jpg" alt="Sample 4" class="sample-img" />
+<div class="sample-img-container rounded-lg shadow-md overflow-hidden" onclick="openPopup('DSCF1574.jpg')">
+            <img src="DSCF1574.jpg" alt="Sample 3" class="sample-img" />
+            <div class="zoom-overlay">
+              <i class="fas fa-search-plus zoom-icon"></i>
+            </div>
+          </div>
+          <div class="sample-img-container rounded-lg shadow-md overflow-hidden" onclick="openPopup('DSCF1575.jpg')">
+            <img src="DSCF1575.jpg" alt="Sample 4" class="sample-img" />
             <div class="zoom-overlay">
               <i class="fas fa-search-plus zoom-icon"></i>
             </div>
@@ -1496,10 +1556,8 @@ UPF Sun Protection: Protects your skin from harmful UV rays
 
 
 
-
-  <footer class="bg-[#1b365d] text-white pt-12 pb-8 px-4 md:px-8 lg:px-16">
-        <div class="max-w-7xl mx-auto">
-<br><br>
+<footer class="w-full bg-[#1b365d] text-white pt-12 pb-8 px-2">
+  <div class="w-full px-4 md:px-8 lg:px-12"><br><br>
             <!-- Main Footer Content -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
                 <!-- Left Column -->
@@ -1515,30 +1573,31 @@ UPF Sun Protection: Protects your skin from harmful UV rays
 
 <div class="flex items-center">
                   <i class="fas fa-paint-brush" style="font-size: 85%;"></i>
-                  <h2 class="hover:underline">&nbsp; Custom Artwork and Graphic Design</h2>
+             <h2 style="font-size: 13px;" class="hover:underline">&nbsp; Custom Artwork and Graphic Design</h2>
+
                 </div>
 
 
 <div class="flex items-center">
                   <i class="fas fa-swatchbook" en-fabric-icon" style="font-size: 85%;"></i>
-                  <h2 class="hover:underline" >&nbsp; Fabric Development</h2>
+                  <h2 style="font-size: 13px;" class="hover:underline" >&nbsp; Fabric Development</h2>
                 </div>
 
 <div class="flex items-center">
                   <i class="fas fa-fill-drip" style="font-size: 85%;"></i>
-                  <h2 class="hover:underline">&nbsp; Embellishment</h2>
+                  <h2 style="font-size: 13px;" class="hover:underline">&nbsp; Embellishment</h2>
                 </div>
 
 <div class="flex items-center">
                   <i class="fas fa-box-open" style="font-size: 85%;"></i>
-                  <h2 class="hover:underline">&nbsp; Teamstore and Door-to-Door Delivery</h2>
+                  <h2 style="font-size: 13px;" class="hover:underline">&nbsp; Teamstore and Door-to-Door Delivery</h2>
                 </div>
 
                     <p class="text-sm opacity-90 leading-relaxed">Create your unique look with High-quality Custom gear</p>
                     <div class="flex flex-col sm:flex-row md:flex-col lg:flex-row gap-3 mt-6">
                         <button class="btn-action bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 px-6 py-3 rounded-full flex items-center justify-center gap-2 font-medium">
                             <i class="fas fa-location-arrow"></i>
-                            <span>Action Now</span>
+                            <span>Let's Talk</span>
                         </button> <br>
                          <hr class="en-hr-gradient1">
                     </div>
@@ -1548,8 +1607,9 @@ UPF Sun Protection: Protects your skin from harmful UV rays
                 <div class="space-y-4  md:text-left footer-column">
                     <div class="mb-6">
                         <div class=" ">
+
                             <div class="">
-                                <span class="text-xs opacity-70"><img src="logo1.gif" alt="Encore Custom Logo" style="max-width: 220px; margin-bottom: 10px;" /></span>
+                               <span class="text-xs opacity-70"><img src="logo11.gif" alt="Encore Custom Logo" style="max-width: 220px; margin-bottom: 10px;" /></span> 
                             </div>
                            
                         </div>
@@ -1574,7 +1634,11 @@ UPF Sun Protection: Protects your skin from harmful UV rays
     CA 94901, USA</span>
                         </div>
                     </div>
-                    <div class="flex justify-center md:justify-start gap-5 pt-4">
+                   
+ <br><br> <hr class="en-hr-gradient1">
+
+
+ <div class="flex justify-center md:justify-start gap-5 pt-4">
                         <a href="#" class="social-icon text-lg w-10 h-10 flex items-center justify-center rounded-full bg-white bg-opacity-10 hover:bg-opacity-20">
                             <i class="fab fa-instagram"></i>
                         </a>
@@ -1583,7 +1647,6 @@ UPF Sun Protection: Protects your skin from harmful UV rays
                         </a>
                  
                     </div>
- <br><br> <hr class="en-hr-gradient1">
                 </div>
 
                 <!-- Right Column -->
@@ -1605,18 +1668,23 @@ UPF Sun Protection: Protects your skin from harmful UV rays
                         </button>
                     </div>
                     <p class="italic text-sm opacity-80 mt-2">Subscribe Now!</p>
-
+<br><br><br><p style="letter-spacing: 0.6em; text-transform: uppercase; font-size: 12px; font-weight: 600; color: white; opacity: 0.7;">
+  E S T. N O W!
+</p>
                 </div>
             </div>
 
             <!-- Footer Bottom Text -->
-            <div class="text-center text-xs opacity-60 pt-8 border-t border-white border-opacity-10 mt-8">
+            <div class="text-center text-xs opacity-60 pt-8 border-t border-white border-opacity-10 mt-8"><br>
              <span class="text-xs uppercase tracking-widest opacity-80 border-b border-red-500 border-opacity-50 pb-1">vertically integrated globalized operation </span>   
             </div>
         </div><br><center>
 <img src="Flags-01.png" alt="Artwork Icon" style="width: 500px; vertical-align: middle; margin-right: 8px;">
 <br>
+
+<div class="text-center text-xs opacity-60 pt-8 border-t border-white border-opacity-10 mt-8">
 <p class="brand-name" style="text-align: center; font-size: 13px; color: #ffffff; font-family: 'Quicksand', sans-serif; margin-top: 20px;">
+
   &copy; 2025 Encore Group LLC. All rights reserved.
 </p></center>
 <br><br><br><br>
